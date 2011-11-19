@@ -13,7 +13,7 @@ data SetError = AlreadyExists
 instance Error SetError
 
 data UnbalancedSet a = E | T (UnbalancedSet a) a (UnbalancedSet a)
-                     deriving (Show)
+                     --deriving (Show)
 
 instance (Ord a) => Set UnbalancedSet a where
   empty = E
@@ -59,7 +59,7 @@ instance (Ord a) => Set UnbalancedSet a where
                  Right t             -> t
                  Left  AlreadyExists -> s
     where insertEx x E           = return $ T E x E
-          insertEx x s@(T a y b)
+          insertEx x (T a y b)
             | x < y     = do t <- insertEx x a
                              return (T t y b)
             | x > y     = do t <- insertEx x b
@@ -73,7 +73,7 @@ instance (Ord a) => Set UnbalancedSet a where
                  Right t             -> t
                  Left  AlreadyExists -> s
     where insertEx1 x E  = return $ T E x E
-          insertEx1 x s@(T a y b)
+          insertEx1 x (T a y b)
             | x <= y     = do t <- insertEx2 y x a
                               return (T t y b)
             | otherwise  = do t <- insertEx1 x b
@@ -81,7 +81,7 @@ instance (Ord a) => Set UnbalancedSet a where
           insertEx2 cand x E
             | cand == x  = throwError AlreadyExists
             | otherwise  = return (T E x E)
-          insertEx2 cand x s@(T a y b)
+          insertEx2 cand x (T a y b)
             | x <= y     = do t <- insertEx2 y x a
                               return (T t y b)
             | otherwise  = do t <- insertEx2 cand x b

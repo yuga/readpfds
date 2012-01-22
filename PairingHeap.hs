@@ -1,4 +1,4 @@
-module PairingHeap (PairingHeap) where
+module PairingHeap (PairingHeap,BinTree,toBinary) where
 
 import Heap
 

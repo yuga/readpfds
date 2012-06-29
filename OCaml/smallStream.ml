@@ -6,88 +6,88 @@ open Printf
 
 module type SMALLSTREAM =
 sig
-  type 'a scell = SSnil | SScons of 'a * 'a sstream
-  and  'a sstream = 'a scell Lazy.t;;
+  type 'a cell = Nil | Cons of 'a * 'a stream
+  and  'a stream = 'a cell Lazy.t;;
   (* type 'a scell;;   *)
-  (* type 'a sstream;; *)
+  (* type 'a stream;; *)
 
   exception Empty;;
 
-  val empty : 'a sstream
-  val cons : 'a -> 'a sstream -> 'a sstream
-  val (++) : 'a sstream -> 'a sstream -> 'a sstream
-  val take : int -> 'a sstream -> 'a sstream
-  val drop : int -> 'a sstream -> 'a sstream
-  val repeat : 'a -> 'a sstream
-  val reverse : 'a sstream -> 'a sstream
+  val empty : 'a stream
+  val cons : 'a -> 'a stream -> 'a stream
+  val (++) : 'a stream -> 'a stream -> 'a stream
+  val take : int -> 'a stream -> 'a stream
+  val drop : int -> 'a stream -> 'a stream
+  val repeat : 'a -> 'a stream
+  val reverse : 'a stream -> 'a stream
 
-  val print : 'a sstream -> unit
+  val print : 'a stream -> unit
 end
 
 module SmallStream : SMALLSTREAM =
 struct
-  (* definition of sstream *)
-  type 'a scell = SSnil | SScons of 'a * 'a sstream
-  and  'a sstream = 'a scell Lazy.t;;
+  (* definition of stream *)
+  type 'a cell = Nil | Cons of 'a * 'a stream
+  and  'a stream = 'a cell Lazy.t;;
 
   (* exception *)
   exception Empty;;
 
   (* functions *)
-  let empty = lazy SSnil;;
+  let empty = lazy Nil;;
 
-  let cons x xs = lazy (SScons (x, xs));;
+  let cons x xs = lazy (Cons (x, xs));;
 
   let rec (++) t1 t2 = lazy (match (t1, t2) with
-    | (lazy SSnil, lazy t2) -> SSnil
-    | (lazy (SScons(x, s)), t2) -> SScons (x, s ++ t2))
+    | (lazy Nil, lazy t2) -> Nil
+    | (lazy (Cons(x, s)), t2) -> Cons (x, s ++ t2))
   ;;
 
   let rec take n s = lazy (match (n, s) with
-    | (0, _) -> SSnil
-    | (_, lazy SSnil) -> SSnil
-    | (n, lazy (SScons (x, s))) -> SScons (x, take (n-1) s))
+    | (0, _) -> Nil
+    | (_, lazy Nil) -> Nil
+    | (n, lazy (Cons (x, s))) -> Cons (x, take (n-1) s))
   ;;
 
   let drop n s = lazy (
     let rec drop' n s = match (n, s) with
       | (0, lazy s) -> s
-      | (_, lazy SSnil) -> SSnil
-      | (n, lazy (SScons (_, s))) -> drop' (n-1) s
+      | (_, lazy Nil) -> Nil
+      | (n, lazy (Cons (_, s))) -> drop' (n-1) s
     in drop' n s)
   ;;
 
   let repeat x =
-    let rec xs = lazy (SScons (x, xs))
+    let rec xs = lazy (Cons (x, xs))
     in xs
   ;;
 
   let reverse xs = lazy (
     let rec reverse' xs r = match (xs, r) with
-      | (lazy SSnil, r) -> r
-      | (lazy (SScons (x, xs')), r) -> reverse' xs' (SScons (x, lazy r))
-    in reverse' xs SSnil)
+      | (lazy Nil, r) -> r
+      | (lazy (Cons (x, xs')), r) -> reverse' xs' (Cons (x, lazy r))
+    in reverse' xs Nil)
   ;;
 
   let print xs =
-    let rec print_sstream chan = function
-      | (lazy SSnil) -> output_string chan "SSnil"
-      | (lazy (SScons (x, xs'))) -> 
-        output_string chan "SScons (";
+    let rec print_stream chan = function
+      | (lazy Nil) -> output_string chan "Nil"
+      | (lazy (Cons (x, xs'))) -> 
+        output_string chan "Cons (";
         output_value  chan x;
         output_string chan ", ";
-        print_sstream chan xs';
+        print_stream chan xs';
         output_string chan ")"
-    in printf "%a\n" print_sstream xs
+    in printf "%a\n" print_stream xs
   ;;
 end
 
 let rec listToStream = function
-  | [] -> lazy SmallStream.SSnil
-  | (x :: xs) -> lazy (SmallStream.SScons (x, listToStream xs))
+  | [] -> lazy SmallStream.Nil
+  | (x :: xs) -> lazy (SmallStream.Cons (x, listToStream xs))
 ;;
 
 let rec streamToList = function
-  | (lazy SmallStream.SSnil) -> []
-  | (lazy (SmallStream.SScons (x, xs))) -> x :: streamToList xs
+  | (lazy SmallStream.Nil) -> []
+  | (lazy (SmallStream.Cons (x, xs))) -> x :: streamToList xs
 ;;

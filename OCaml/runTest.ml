@@ -1,36 +1,37 @@
 #use "topfind";;
 #require "OUnit";;
-#load "smallStream.cmo";;
 open OUnit;;
 
 (* Tests for SmallStream *)
-open SmallStream.SmallStream;;
+#load "smallStream.cmo";;
+open SmallStream;;
+module S = SmallStream
 
-let stream_321 = lazy (SScons(3, (lazy (SScons(2, lazy (SScons(1, lazy SSnil)))))));;
-let stream_933 = lazy (SScons(9, (lazy (SScons(3, lazy (SScons(3, lazy SSnil)))))));;
-let stream_ttt = lazy (SScons(true, (lazy (SScons(true, lazy (SScons(true, lazy SSnil)))))));;
-let stream_ftf = lazy (SScons(false, (lazy (SScons(true, lazy (SScons(false, lazy SSnil)))))));;
-let stream_inf = repeat 1;;
-let stream_inf2 = repeat 2;;
+let stream_321 = lazy (S.Cons(3, (lazy (S.Cons(2, lazy (S.Cons(1, lazy S.Nil)))))));;
+let stream_933 = lazy (S.Cons(9, (lazy (S.Cons(3, lazy (S.Cons(3, lazy S.Nil)))))));;
+let stream_ttt = lazy (S.Cons(true, (lazy (S.Cons(true, lazy (S.Cons(true, lazy S.Nil)))))));;
+let stream_ftf = lazy (S.Cons(false, (lazy (S.Cons(true, lazy (S.Cons(false, lazy S.Nil)))))));;
+let stream_inf = S.repeat 1;;
+let stream_inf2 = S.repeat 2;;
 
-let test_drop _ = match drop 2 stream_321 with
-  | (lazy SSnil) -> assert_failure "stream has only one elm."
-  | (lazy (SScons(x, _))) -> assert_equal 1 x
+let test_drop _ = match S.drop 2 stream_321 with
+  | (lazy S.Nil) -> assert_failure "stream has only one elm."
+  | (lazy (S.Cons(x, _))) -> assert_equal 1 x
 ;;
 
-let test_take _ = match drop 3 (take 4 stream_inf) with
-  | (lazy SSnil) -> assert_failure "stream_inf has no SSnil."
-  | (lazy (SScons(x, _))) -> assert_equal 1 x
+let test_take _ = match S.drop 3 (S.take 4 stream_inf) with
+  | (lazy S.Nil) -> assert_failure "stream_inf has no S.Nil."
+  | (lazy (S.Cons(x, _))) -> assert_equal 1 x
 ;;
 
-let test_append _ = match drop 9 (take 10 (stream_inf2 ++ stream_inf)) with
-  | (lazy SSnil) -> assert_failure "stream_inf has no SSnil."
-  | (lazy (SScons(x, _))) -> assert_equal 2 x
+let test_append _ = match S.drop 9 (S.take 10 (S.(++) stream_inf2 stream_inf)) with
+  | (lazy S.Nil) -> assert_failure "stream_inf has no S.Nil."
+  | (lazy (S.Cons(x, _))) -> assert_equal 2 x
 ;;
 
-let test_reverse _ = match reverse (reverse stream_321) with
-  | (lazy SSnil) -> assert_failure "stream has elms."
-  | (lazy (SScons(x, _))) -> assert_equal 3 x
+let test_reverse _ = match S.reverse (S.reverse stream_321) with
+  | (lazy S.Nil) -> assert_failure "stream has elms."
+  | (lazy (S.Cons(x, _))) -> assert_equal 3 x
 ;;
 
 let suite = "Test SmallStream" >:::
@@ -44,4 +45,13 @@ let suite = "Test SmallStream" >:::
 let _ = run_test_tt_main suite;;
 
 (* Tests for RealTimeQueue *)
+#load "rqueue.cmo";;
+#load "realTimeQueue.cmo";;
+open RealTimeQueue;;
+module Q = RealTimeQueue
+
+let queue_0 = Q.empty
+;;
+
+Q.print queue_0;;
 

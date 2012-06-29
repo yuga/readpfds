@@ -5,6 +5,7 @@
 
 # working files
 *.cmi
+*.cmo
 *.annot
 *.exe
 *.hi

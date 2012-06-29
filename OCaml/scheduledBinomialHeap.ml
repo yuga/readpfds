@@ -10,16 +10,16 @@ struct
 
   type tree = Node of Elem.t * tree list
   and digit = Zero | One of tree
-  and schedule = digit S.sstream list
-  and heap = digit S.sstream * schedule 
+  and schedule = digit S.stream list
+  and heap = digit S.stream * schedule 
 
   exception Empty
 
-  let empty = (lazy S.SSnil, [])
+  let empty = (lazy S.Nil, [])
   ;;
 
   let isEmpty = function
-    | (lazy S.SSnil, _) -> true
+    | (lazy S.Nil, _) -> true
     | _ -> false
   ;;
 
@@ -30,29 +30,29 @@ struct
   ;;
 
   let rec insTree = function
-    | (t, lazy S.SSnil) -> lazy (S.SScons (One t, lazy S.SSnil))
-    | (t, lazy (S.SScons (Zero, ds))) -> lazy (S.SScons (One t, ds))
-    | (t, lazy (S.SScons (One t', ds))) -> lazy (S.SScons (Zero, insTree (link (t, t' ), ds)))
+    | (t, lazy S.Nil) -> lazy (S.Cons (One t, lazy S.Nil))
+    | (t, lazy (S.Cons (Zero, ds))) -> lazy (S.Cons (One t, ds))
+    | (t, lazy (S.Cons (One t', ds))) -> lazy (S.Cons (Zero, insTree (link (t, t' ), ds)))
   ;;
 
   let rec mrg = function
-    | (ds1, lazy S.SSnil) -> ds1
-    | (lazy S.SSnil, ds2) -> ds2
-    | (lazy (S.SScons (Zero, ds1)), lazy (S.SScons (d, ds2))) -> lazy (S.SScons (d, mrg (ds1, ds2)))
-    | (lazy (S.SScons (d, ds1)), lazy (S.SScons (Zero, ds2))) -> lazy (S.SScons (d, mrg (ds1, ds2)))
-    | (lazy (S.SScons (One t1, ds1)), lazy (S.SScons (One t2, ds2))) ->
-        lazy (S.SScons (Zero, insTree (link (t1, t2), mrg (ds1, ds2))))
+    | (ds1, lazy S.Nil) -> ds1
+    | (lazy S.Nil, ds2) -> ds2
+    | (lazy (S.Cons (Zero, ds1)), lazy (S.Cons (d, ds2))) -> lazy (S.Cons (d, mrg (ds1, ds2)))
+    | (lazy (S.Cons (d, ds1)), lazy (S.Cons (Zero, ds2))) -> lazy (S.Cons (d, mrg (ds1, ds2)))
+    | (lazy (S.Cons (One t1, ds1)), lazy (S.Cons (One t2, ds2))) ->
+        lazy (S.Cons (Zero, insTree (link (t1, t2), mrg (ds1, ds2))))
   ;;
 
   let rec normalize = function
-    | (lazy S.SSnil as ds) -> ds
-    | (lazy (S.SScons (_, ds')) as ds) -> (
+    | (lazy S.Nil as ds) -> ds
+    | (lazy (S.Cons (_, ds')) as ds) -> (
         ignore (normalize ds'); 
         ds)
   ;;
 
   let exec = function
-    | ((lazy (S.SScons (Zero, job))) :: sched) -> job :: sched
+    | ((lazy (S.Cons (Zero, job))) :: sched) -> job :: sched
     | (_ :: sched) -> sched
   ;;
 
@@ -67,16 +67,16 @@ struct
   ;;
 
   let rec removeMinTree = function
-    | (lazy S.SSnil) -> raise Empty
-    | (lazy (S.SScons (One t, lazy S.SSnil))) -> (t, lazy S.SSnil)
-    | (lazy (S.SScons (Zero, ds))) ->
+    | (lazy S.Nil) -> raise Empty
+    | (lazy (S.Cons (One t, lazy S.Nil))) -> (t, lazy S.Nil)
+    | (lazy (S.Cons (Zero, ds))) ->
         let (t', ds') = removeMinTree ds in
-        (t', lazy (S.SScons (Zero, ds')))
-    | (lazy (S.SScons (One (Node (x, _) as t), ds))) ->
+        (t', lazy (S.Cons (Zero, ds')))
+    | (lazy (S.Cons (One (Node (x, _) as t), ds))) ->
         match removeMinTree ds with
           | ((Node (x', _) as t'), ds') ->
-              if Elem.eq (x, x') then (t, lazy (S.SScons (Zero, ds)))
-              else (t', lazy (S.SScons (One t, ds')))
+              if Elem.eq (x, x') then (t, lazy (S.Cons (Zero, ds)))
+              else (t', lazy (S.Cons (One t, ds')))
   ;;
 
   let findMin (ds, _) =

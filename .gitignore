@@ -1,1 +1,16 @@
-*.hs#
+# backup files
+*#
+*~
+*.swp
+
+# working files
+*.cmi
+*.annot
+*.exe
+*.hi
+*.o
+
+# test or I'm not author of the files
+docs/*.ps
+OCaml/test
+Ocaml/pfds-read

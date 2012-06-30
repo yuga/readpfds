@@ -52,6 +52,7 @@ struct
   ;;
 
   let exec = function
+    | [] -> []
     | ((lazy (S.Cons (Zero, job))) :: sched) -> job :: sched
     | (_ :: sched) -> sched
   ;;
@@ -91,15 +92,19 @@ struct
   ;;
 
   let print (ds, sched) =
-    let rec print_stream = function
-      | (lazy S.Nil) -> 
-          print_string "$Nil"
-      | (lazy (S.Cons (x, xs))) -> (
-          print_string "$Cons (";
-          print_digit  x;
-          print_string ", ";
-          print_stream xs;
-          print_string ")")
+    let rec print_stream s =
+      let print_stream_val = function
+        | (lazy S.Nil) -> 
+            print_string "Nil"
+        | (lazy (S.Cons (x, xs))) -> (
+            print_string "Cons <";
+            print_digit  x;
+            print_string ", ";
+            print_stream xs;
+            print_string ">") in
+      if Lazy.lazy_is_val s
+      then print_stream_val s
+      else print_string "SUSP"
     and print_schedule ds = (
       print_string "schedule [";
       print_stream_list ds;
@@ -130,9 +135,9 @@ struct
           print_tree   x;
           print_string ";";
           print_tree_list xs) in
-    print_string "heap (";
+    print_string "heap\n\t(";
     print_stream ds;
-    print_string ", ";
+    print_string ",\n\t";
     print_schedule sched;
     print_string ")";
     print_newline ()

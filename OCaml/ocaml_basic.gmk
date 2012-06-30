@@ -76,8 +76,8 @@ NAT_LINK.cmx = $(ocamlopt) $(ocamlopt_opt) $(ocaml_load_path) $(ocaml_extra_load
 # 	@echo "byte_stdlibs = $(byte_stdlibs)"
 # 	@echo "nat_stdlibs  = $(nat_stdlibs)"
 
-test:: all
-	[ ! -r runTest.ml ] || ocaml $(ocaml_inc_path) $(ocaml_extra_inc_path) < runTest.ml
+#test:: all
+#	[ ! -r runTest.ml ] || ocaml $(ocaml_inc_path) $(ocaml_extra_inc_path) < runTest.ml
 
 all::
 

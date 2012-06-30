@@ -1,7 +1,7 @@
 include ./ocaml_basic.gmk
 
 test::
-	ocaml < runTest.ml
+#	ocaml < runTest.ml
 
 all:: item.cmo ordered.cmo \
       smallStream.cmo \

@@ -50,22 +50,26 @@ struct
   ;;
 
   let print (f, r, s) =
-    let rec print_elem_stream = function
-      | (lazy S.Nil) -> print_string "$Nil"
-      | (lazy (S.Cons (x, xs))) ->
-          print_string "$Cons (";
-          Elem.print x;
-          print_string ", ";
-          print_elem_stream xs;
-          print_string ")" in
+    let rec print_elem_stream s =
+      let print_elem_stream_val = function
+        | (lazy S.Nil) -> print_string "Nil"
+        | (lazy (S.Cons (x, xs))) ->
+            print_string "Cons (";
+            Elem.print x;
+            print_string ", ";
+            print_elem_stream xs;
+            print_string ")" in
+        if Lazy.lazy_is_val s
+        then print_elem_stream_val s
+        else print_string "SUSP" in
     let rec print_elem_list = function
       | [] -> ()
       | (x :: xs) -> Elem.print x; print_string ";"; print_elem_list xs in
-    print_string "queue (";
+    print_string "queue\n\t(";
     print_elem_stream f;
-    print_string ", [";
+    print_string ",\n\t[";
     print_elem_list r;
-    print_string "], ";
+    print_string "],\n\t";
     print_elem_stream s;
     print_string ")";
     print_newline ()

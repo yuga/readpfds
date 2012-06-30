@@ -1,17 +1,21 @@
+open Item;;
+open Ordered;;
 open Rqueue;;
 open SmallStream;;
 open Printf;;
 
-module RealTimeQueue : RQUEUE =
+module RealTimeQueue (Element : ITEM) : RQUEUE
+  with module Elem = Element =
 struct
+  module Elem = Element
   module S = SmallStream
 
   (* definition of queue
    * (front, rear, schedule) *)
-  type 'a queue = 'a S.stream * 'a list * 'a S.stream;;
+  type queue = Elem.t S.stream * Elem.t list * Elem.t S.stream
 
   (* exception *)
-  exception Empty;;
+  exception Empty
 
   (* funcitons *)
   let empty = (lazy S.Nil, [], lazy S.Nil);;
@@ -21,13 +25,13 @@ struct
     | _ -> false
   ;;
 
-  let rec rotate : 'a queue -> 'a S.stream = function
+  let rec rotate : queue -> Elem.t S.stream = function
     | (lazy S.Nil, y :: _, a) -> lazy (S.Cons (y, a))
     | (lazy (S.Cons (x, xs)), y :: ys, a) ->
         lazy (S.Cons (x, rotate (xs, ys, lazy (S.Cons (y, a)))))
   ;;
 
-  let exec : 'a queue -> 'a queue = function
+  let exec : queue -> queue = function
     | (f, r, lazy (S.Cons (x, s))) -> (f, r, s)
     | (f, r, lazy S.Nil) -> let f' = rotate (f, r, lazy S.Nil)
                             in (f', [], f')
@@ -45,12 +49,27 @@ struct
     | (lazy (S.Cons (x, f)), r, s) -> exec (f, r, s)
   ;;
 
-  let print q =
-    let rec print_queue chan = function
-      | (f, r, s) ->
-          S.print f;
-          output_value chan r;
-          S.print s
-    in printf "%a\n" print_queue q
+  let print (f, r, s) =
+    let rec print_elem_stream = function
+      | (lazy S.Nil) -> print_string "$Nil"
+      | (lazy (S.Cons (x, xs))) ->
+          print_string "$Cons (";
+          Elem.print x;
+          print_string ", ";
+          print_elem_stream xs;
+          print_string ")" in
+    let rec print_elem_list = function
+      | [] -> ()
+      | (x :: xs) -> Elem.print x; print_string ";"; print_elem_list xs in
+    print_string "queue (";
+    print_elem_stream f;
+    print_string ", [";
+    print_elem_list r;
+    print_string "], ";
+    print_elem_stream s;
+    print_string ")";
+    print_newline ()
   ;;
 end
+
+module IntQueue = RealTimeQueue (Int)

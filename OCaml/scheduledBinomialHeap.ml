@@ -90,19 +90,52 @@ struct
     (normalize ds'', [])
   ;;
 
-  let dprint heap = print_newline ()
-  (*
-  let dprint heap =
-    let rec dprint = function
-      | E -> print_string "E"
-      | T (r, y, a, b) ->
-        print_string "T ("; print_int r;
-        print_string ", " ; Element.dprint y;
-        print_string ", " ; dprint a;
-        print_string ", " ; dprint b;
-        print_string ")"
-    in dprint heap; print_newline ();
-  *)
+  let print (ds, sched) =
+    let rec print_stream = function
+      | (lazy S.Nil) -> 
+          print_string "$Nil"
+      | (lazy (S.Cons (x, xs))) -> (
+          print_string "$Cons (";
+          print_digit  x;
+          print_string ", ";
+          print_stream xs;
+          print_string ")")
+    and print_schedule ds = (
+      print_string "schedule [";
+      print_stream_list ds;
+      print_string "]")
+    and print_stream_list = function
+      | [] -> ()
+      | (x :: xs) -> (
+          print_stream x;
+          print_string ";";
+          print_stream_list xs)
+    and print_digit = function
+      | (Zero) ->
+          print_string "Zero"
+      | (One tree) -> (
+          print_string "One (";
+          print_tree   tree;
+          print_string ")")
+    and print_tree = function
+      | (Node (x, xs)) -> (
+          print_string "Node (";
+          Elem.print   x;
+          print_string ", [";
+          print_tree_list xs;
+          print_string "])")
+    and print_tree_list = function
+      | [] -> ()
+      | (x :: xs) -> (
+          print_tree   x;
+          print_string ";";
+          print_tree_list xs) in
+    print_string "heap (";
+    print_stream ds;
+    print_string ", ";
+    print_schedule sched;
+    print_string ")";
+    print_newline ()
   ;;
 end
 

@@ -50,6 +50,34 @@ struct
       | (xs, (xs', _) :: segs) -> mrgAll (mrg (xs, xs'), segs) in
     streamToList (mrgAll (lazy S.Nil, segs))
   ;;
+
+  let print (size, segs) =
+    let rec print_stream = function
+      | (lazy S.Nil) ->
+          print_string "$Nil"
+      | (lazy (S.Cons (x, xs))) ->
+          print_string "$Cons(";
+          Elem.print   x;
+          print_stream xs;
+          print_string ")" in
+    let print_schedule es =
+      print_string "schedule [";
+      print_stream es;
+      print_string "]" in
+    let rec print_segment_list = function
+      | [] -> ()
+      | ((stream, sched) :: ss) ->
+          print_string "(";
+          print_stream stream;
+          print_string ", ";
+          print_schedule sched;
+          print_string ");";
+          print_segment_list ss in
+    print_string "sortable (";
+    print_int    size;
+    print_string ", [";
+    print_segment_list segs;
+    print_string "])"
 end
 
 module IntSort = ScheduledBottomUpMergeSort (Int);;

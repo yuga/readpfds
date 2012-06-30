@@ -14,6 +14,6 @@ sig
   val findMin   : heap -> Elem.t
   val deleteMin : heap -> heap
 
-  val dprint : heap -> unit
+  val print : heap -> unit
 end
 

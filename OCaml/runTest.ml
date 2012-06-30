@@ -44,14 +44,3 @@ let suite = "Test SmallStream" >:::
 
 let _ = run_test_tt_main suite;;
 
-(* Tests for RealTimeQueue *)
-#load "rqueue.cmo";;
-#load "realTimeQueue.cmo";;
-open RealTimeQueue;;
-module Q = RealTimeQueue
-
-let queue_0 = Q.empty
-;;
-
-Q.print queue_0;;
-

@@ -52,17 +52,28 @@ struct
   ;;
 
   let print (size, segs) =
-    let rec print_stream = function
-      | (lazy S.Nil) ->
-          print_string "$Nil"
-      | (lazy (S.Cons (x, xs))) ->
-          print_string "$Cons(";
-          Elem.print   x;
-          print_stream xs;
-          print_string ")" in
+    let rec print_stream s =
+      let print_stream_val = function
+        | (lazy S.Nil) -> 
+            print_string "Nil"
+        | (lazy (S.Cons (x, xs))) -> (
+            print_string "Cons <";
+            Elem.print x;
+            print_string ", ";
+            print_stream xs;
+            print_string ">") in
+      if Lazy.lazy_is_val s
+      then print_stream_val s
+      else print_string "SUSP" in
     let print_schedule es =
+      let rec print_stream_list = function
+        | [] -> ()
+        | (s :: ss) ->
+            print_stream s;
+            print_string ";";
+            print_stream_list ss in
       print_string "schedule [";
-      print_stream es;
+      print_stream_list es;
       print_string "]" in
     let rec print_segment_list = function
       | [] -> ()
@@ -78,6 +89,7 @@ struct
     print_string ", [";
     print_segment_list segs;
     print_string "])"
+  ;;
 end
 
 module IntSort = ScheduledBottomUpMergeSort (Int);;

@@ -9,5 +9,7 @@ sig
   val empty : sortable
   val add : Elem.t * sortable -> sortable
   val sort : sortable -> Elem.t list
+
+  val print : sortable -> unit
 end
 

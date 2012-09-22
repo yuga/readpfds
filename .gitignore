@@ -13,5 +13,6 @@
 
 # test or I'm not author of the files
 docs/*.ps
+OCaml/gist
 OCaml/test
-Ocaml/pfds-read
+OCaml/pfds-read

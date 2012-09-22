@@ -2,9 +2,7 @@ open Item;;
 
 module type ORDERED = 
 sig
-  type t
-
-  include ITEM with type t := t
+  include ITEM
 
   val eq  : t * t -> bool
   val lt  : t * t -> bool

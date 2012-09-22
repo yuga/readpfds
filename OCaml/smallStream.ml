@@ -16,8 +16,8 @@ sig
   val empty : 'a stream
   val cons : 'a -> 'a stream -> 'a stream
   val (++) : 'a stream -> 'a stream -> 'a stream
-  val take : int -> 'a stream -> 'a stream
-  val drop : int -> 'a stream -> 'a stream
+  val take : int * 'a stream -> 'a stream
+  val drop : int * 'a stream -> 'a stream
   val repeat : 'a -> 'a stream
   val reverse : 'a stream -> 'a stream
 
@@ -39,17 +39,17 @@ struct
   let cons x xs = lazy (Cons (x, xs));;
 
   let rec (++) t1 t2 = lazy (match (t1, t2) with
-    | (lazy Nil, lazy t2) -> Nil
+    | (lazy Nil, lazy t2) -> t2
     | (lazy (Cons(x, s)), t2) -> Cons (x, s ++ t2))
   ;;
 
-  let rec take n s = lazy (match (n, s) with
+  let rec take (n, s) = lazy (match (n, s) with
     | (0, _) -> Nil
     | (_, lazy Nil) -> Nil
-    | (n, lazy (Cons (x, s))) -> Cons (x, take (n-1) s))
+    | (n, lazy (Cons (x, s))) -> Cons (x, take ((n-1), s)))
   ;;
 
-  let drop n s = lazy (
+  let drop (n, s) = lazy (
     let rec drop' n s = match (n, s) with
       | (0, lazy s) -> s
       | (_, lazy Nil) -> Nil

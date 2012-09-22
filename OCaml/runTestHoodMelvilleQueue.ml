@@ -4,11 +4,11 @@
 #load "item.cmo";;
 #load "ordered.cmo";;
 #load "rqueue.cmo";;
-#load "realTimeQueue.cmo";;
+#load "hoodMelvilleQueue.cmo";;
 
 open OUnit;;
-open RealTimeQueue;;
-module Q = IntQueue
+open HoodMelvilleQueue;;
+module Q = IntHoodMelvilleQueue
 
 let make_queue n =
   let rec make_queue n i q =

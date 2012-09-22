@@ -16,5 +16,26 @@ sig
   val tail : queue -> queue (* raises Empty if queue is empty *)
 
   val print : queue -> unit
+  val dprint : bool -> queue -> unit
 end
 
+module type RDEQUE =
+sig
+  include RQUEUE
+
+  val cons : Elem.t -> queue -> queue
+  val last : queue -> Elem.t
+  val init : queue -> queue
+end
+
+(*
+module type RDEQUE =
+sig
+  type deque
+  include RQUEUE with type queue := deque
+
+  val cons : deque -> Elem.t -> deque
+  val last : deque -> Elem.t
+  val init : deque -> deque
+end
+*)

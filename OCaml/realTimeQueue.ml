@@ -49,7 +49,7 @@ struct
     | (lazy (S.Cons (x, f)), r, s) -> exec (f, r, s)
   ;;
 
-  let print (f, r, s) =
+  let dprint show (f, r, s) =
     let rec print_elem_stream s =
       let print_elem_stream_val = function
         | (lazy S.Nil) -> print_string "Nil"
@@ -59,7 +59,7 @@ struct
             print_string ", ";
             print_elem_stream xs;
             print_string ")" in
-        if Lazy.lazy_is_val s
+        if show || Lazy.lazy_is_val s
         then print_elem_stream_val s
         else print_string "SUSP" in
     let rec print_elem_list = function
@@ -73,6 +73,9 @@ struct
     print_elem_stream s;
     print_string ")";
     print_newline ()
+  ;;
+
+  let print q = dprint false q
   ;;
 end
 

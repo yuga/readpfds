@@ -101,7 +101,7 @@ struct
         else lazy (S.Cons (ONE t, update (i - size t, y, ts)))
     | (i, y, lazy (S.Cons (TWO (t1, t2), ts))) ->
         if i < size t1 then lazy (S.Cons (TWO (updateTree (i, y, t1), t2), ts))
-        else if i < size t1 then lazy (S.Cons (TWO (t1, updateTree (i - size t1, y, t2)), ts))
+        else if i < size t1 + size t2 then lazy (S.Cons (TWO (t1, updateTree (i - size t1, y, t2)), ts))
         else lazy (S.Cons (TWO (t1, t2), update (i - size t1 - size t2, y, ts)))
   ;;
 
@@ -258,8 +258,8 @@ struct
         else lazy (S.Cons (TWO (t1, t2), update (i - size t1 - size t2, y, ts)))
     | (i, y, lazy (S.Cons (THREE (t1, t2, t3), ts))) ->
         if i < size t1 then lazy (S.Cons (THREE (updateTree (i, y, t1), t2, t3), ts))
-        else if i < size t1 then lazy (S.Cons (THREE (t1, updateTree (i - size t1, y, t2), t3), ts))
-        else if i < size t1 + size t2 then lazy (S.Cons (THREE (t1, t2, updateTree (i - size t1 - size t2, y, t3)), ts))
+        else if i < size t1 + size t2 then lazy (S.Cons (THREE (t1, updateTree (i - size t1, y, t2), t3), ts))
+        else if i < size t1 + size t2 + size t3 then lazy (S.Cons (THREE (t1, t2, updateTree (i - size t1 - size t2, y, t3)), ts))
         else lazy (S.Cons (THREE (t1, t2, t3), update (i - size t1 - size t2 - size t3, y, ts)))
   ;;
 
@@ -382,9 +382,13 @@ struct
     (ts', exec (exec (ts' :: sched)))
   ;;
 
-  let head (ts, sched) =
-    let (LEAF x, _) = unconsTree ts in
-    x
+  let head (ts, sched) = match ts with
+    | lazy S.Nil -> raise Empty
+    | lazy (S.Cons(ONE (LEAF x), _)) -> x
+    | lazy (S.Cons(TWO (LEAF x, _), _)) -> x
+    | lazy (S.Cons(TWOR (LEAF x, _), _)) -> x
+    | lazy (S.Cons(THREE (LEAF x, _, _), _)) -> x
+    | _ -> raise Subscript
   ;;
 
   let tail (ts, sched) =
@@ -438,16 +442,16 @@ struct
         else lazy (S.Cons (ONE t, update' (i - size t, y, ts)))
     | (i, y, lazy (S.Cons (TWO (t1, t2), ts))) ->
         if i < size t1 then lazy (S.Cons (TWO (updateTree (i, y, t1), t2), ts))
-        else if i < size t1 then lazy (S.Cons (TWO (t1, updateTree (i - size t1, y, t2)), ts))
+        else if i < size t1 + size t2 then lazy (S.Cons (TWO (t1, updateTree (i - size t1, y, t2)), ts))
         else lazy (S.Cons (TWO (t1, t2), update' (i - size t1 - size t2, y, ts)))
     | (i, y, lazy (S.Cons (TWOR (t1, t2), ts))) ->
-        if i < size t1 then lazy (S.Cons (TWO (updateTree (i, y, t1), t2), ts))
-        else if i < size t1 then lazy (S.Cons (TWO (t1, updateTree (i - size t1, y, t2)), ts))
-        else lazy (S.Cons (TWO (t1, t2), update' (i - size t1 - size t2, y, ts)))
+        if i < size t1 then lazy (S.Cons (TWOR (updateTree (i, y, t1), t2), ts))
+        else if i < size t1 + size t2 then lazy (S.Cons (TWOR (t1, updateTree (i - size t1, y, t2)), ts))
+        else lazy (S.Cons (TWOR (t1, t2), update' (i - size t1 - size t2, y, ts)))
     | (i, y, lazy (S.Cons (THREE (t1, t2, t3), ts))) ->
         if i < size t1 then lazy (S.Cons (THREE (updateTree (i, y, t1), t2, t3), ts))
-        else if i < size t1 then lazy (S.Cons (THREE (t1, updateTree (i - size t1, y, t2), t3), ts))
-        else if i < size t1 + size t2 then lazy (S.Cons (THREE (t1, t2, updateTree (i - size t1 - size t2, y, t3)), ts))
+        else if i < size t1 + size t2 then lazy (S.Cons (THREE (t1, updateTree (i - size t1, y, t2), t3), ts))
+        else if i < size t1 + size t2 + size t3 then lazy (S.Cons (THREE (t1, t2, updateTree (i - size t1 - size t2, y, t3)), ts))
         else lazy (S.Cons (THREE (t1, t2, t3), update' (i - size t1 - size t2 - size t3, y, ts)))
   ;;
 

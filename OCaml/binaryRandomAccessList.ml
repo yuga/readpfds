@@ -148,7 +148,7 @@ end = struct
     | (i, NODE (w, t1, t2), a) ->
         if i < (w/2)
         then dropTreeLeft (i, t1, ONE t2 :: a)
-        else dropTreeRight (i - (w/2), t1, a)
+        else dropTreeRight (i - (w/2), t2, a)
   and dropTreeRight  : int * Elem.t tree * rlist -> rlist = function
     | (0, t, a) -> fillZero (t, ONE t :: a)
     | (i, LEAF x, a) -> raise Subscript

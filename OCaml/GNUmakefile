@@ -18,4 +18,5 @@ all:: item.cmo ordered.cmo \
       randomAccessList.cmo \
       binaryRandomAccessList.cmo \
       zerolessBinaryRandomAccessList.cmo \
-      lazyBinaryRandomAccessList.cmo
+      lazyBinaryRandomAccessList.cmo \
+      altBinaryRandomAccessList.cmo

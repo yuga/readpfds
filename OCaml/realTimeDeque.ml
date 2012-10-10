@@ -67,7 +67,7 @@ struct
     else q
   ;;
 
-  let cons x (lenf, f, sf, lenr, r, sr) =
+  let cons (x, (lenf, f, sf, lenr, r, sr)) =
     check (lenf + 1, lazy (S.Cons (x, f)), exec1 sf, lenr, r, exec1 sr)
   ;;
 
@@ -87,7 +87,7 @@ struct
   let reverse (lenf, f, sf, lenr, r, sr) = (lenr, r, sr, lenf, f, sf)
   ;;
 
-  let snoc q x = reverse (cons x (reverse q))
+  let snoc (q, x) = reverse (cons (x, (reverse q)))
   ;;
 
   let last q = head (reverse q)

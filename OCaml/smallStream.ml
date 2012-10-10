@@ -7,7 +7,7 @@ open Printf
 module type SMALLSTREAM =
 sig
   type 'a cell = Nil | Cons of 'a * 'a stream
-  and  'a stream = 'a cell Lazy.t;;
+  and  'a stream = 'a cell Lazy.t
   (* type 'a scell;;   *)
   (* type 'a stream;; *)
 
@@ -28,15 +28,17 @@ module SmallStream : SMALLSTREAM =
 struct
   (* definition of stream *)
   type 'a cell = Nil | Cons of 'a * 'a stream
-  and  'a stream = 'a cell Lazy.t;;
+  and  'a stream = 'a cell Lazy.t
 
   (* exception *)
-  exception Empty;;
+  exception Empty
 
   (* functions *)
-  let empty = lazy Nil;;
+  let empty = lazy Nil
+  ;;
 
-  let cons x xs = lazy (Cons (x, xs));;
+  let cons x xs = lazy (Cons (x, xs))
+  ;;
 
   let rec (++) t1 t2 = lazy (match (t1, t2) with
     | (lazy Nil, lazy t2) -> t2

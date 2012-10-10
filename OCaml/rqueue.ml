@@ -11,7 +11,7 @@ sig
   val empty : queue
   val isEmpty : queue -> bool
   
-  val snoc : queue -> Elem.t -> queue
+  val snoc : (queue * Elem.t) -> queue
   val head : queue -> Elem.t (* raises Empty if queue is empty *)
   val tail : queue -> queue (* raises Empty if queue is empty *)
 
@@ -23,19 +23,7 @@ module type RDEQUE =
 sig
   include RQUEUE
 
-  val cons : Elem.t -> queue -> queue
+  val cons : (Elem.t * queue) -> queue
   val last : queue -> Elem.t
   val init : queue -> queue
 end
-
-(*
-module type RDEQUE =
-sig
-  type deque
-  include RQUEUE with type queue := deque
-
-  val cons : deque -> Elem.t -> deque
-  val last : deque -> Elem.t
-  val init : deque -> deque
-end
-*)

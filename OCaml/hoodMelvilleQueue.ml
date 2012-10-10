@@ -51,7 +51,7 @@ struct
   let isEmpty (lenf, f, state, lenr, r) = (lenf == 0)
   ;;
 
-  let snoc (lenf, f, state, lenr, r) x = check (lenf, f, state, lenr + 1, x :: r)
+  let snoc ((lenf, f, state, lenr, r), x) = check (lenf, f, state, lenr + 1, x :: r)
   ;;
 
   let head = function

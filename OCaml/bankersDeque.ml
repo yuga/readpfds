@@ -43,7 +43,7 @@ struct
     else q
   ;;
 
-  let cons x (lenf, f, lenr, r) = check (lenf + 1, lazy (S.Cons (x, f)), lenr, r)
+  let cons (x, (lenf, f, lenr, r)) = check (lenf + 1, lazy (S.Cons (x, f)), lenr, r)
   ;;
 
   let head = function
@@ -61,7 +61,7 @@ struct
   let reverse (lenf, f, lenr, r) = (lenr, r, lenf, f)
   ;;
 
-  let snoc q x = reverse (cons x (reverse q))
+  let snoc (q, x) = reverse (cons (x, (reverse q)))
   ;;
 
   let last q = head (reverse q)

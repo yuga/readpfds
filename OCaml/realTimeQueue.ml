@@ -37,7 +37,7 @@ struct
                             in (f', [], f')
   ;;
 
-  let snoc (f, r, s) x = exec (f, x :: r, s);;
+  let snoc ((f, r, s), x) = exec (f, x :: r, s);;
 
   let head = function
     | (lazy S.Nil, r, s) -> raise Empty

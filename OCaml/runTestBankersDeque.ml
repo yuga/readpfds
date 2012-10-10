@@ -13,15 +13,15 @@ module Q = IntBankersDeque
 let make_queue n =
   let rec make_queue n i q =
     if i < n
-    then make_queue n (i+1) (Q.snoc q i)
-    else Q.snoc q i
+    then make_queue n (i+1) (Q.snoc (q, i))
+    else Q.snoc (q, i)
   in make_queue n 1 Q.empty
 ;;
 
 let snoc_queue n q =
   let rec snoc_queue n i q =
     if i < n
-    then snoc_queue n (i+1) (Q.snoc q (i*(-1)))
+    then snoc_queue n (i+1) (Q.snoc (q, (i*(-1))))
     else q
   in snoc_queue n 0 q
 ;;

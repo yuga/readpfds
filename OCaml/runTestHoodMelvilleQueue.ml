@@ -13,8 +13,8 @@ module Q = IntHoodMelvilleQueue
 let make_queue n =
   let rec make_queue n i q =
     if i < n
-    then make_queue n (i+1) (Q.snoc q i)
-    else Q.snoc q i
+    then make_queue n (i+1) (Q.snoc (q, i))
+    else Q.snoc (q, i)
   in make_queue n 1 Q.empty
 ;;
 

@@ -1,29 +1,48 @@
 open Item
 
+module type RQUEUEP =
+sig
+  type 'a q 
+  val empty   : 'a q
+  val isEmpty : 'a q -> bool
+  
+  val snoc    : 'a q * 'a -> 'a q
+  val head    : 'a q -> 'a   (* raises Empty if queue is empty *)
+  val tail    : 'a q -> 'a q (* raises Empty if queue is empty *)
+
+  val print_queue : ('a -> unit) -> bool -> 'a q -> unit
+end
+
+module type RDEQUEP =
+sig
+  include RQUEUEP
+
+  val cons : 'a * 'a q -> 'a q
+  val last : 'a q -> 'a
+  val init : 'a q -> 'a q
+end
+
 module type RQUEUE =
 sig
-  module Elem : ITEM
+  type elt
+  type t
 
-  type queue
+  val empty   : t
+  val isEmpty : t -> bool
   
-  exception Empty
+  val snoc    : t * elt -> t
+  val head    : t -> elt (* raises Empty if queue is empty *)
+  val tail    : t -> t   (* raises Empty if queue is empty *)
 
-  val empty : queue
-  val isEmpty : queue -> bool
-  
-  val snoc : (queue * Elem.t) -> queue
-  val head : queue -> Elem.t (* raises Empty if queue is empty *)
-  val tail : queue -> queue (* raises Empty if queue is empty *)
-
-  val print : queue -> unit
-  val dprint : bool -> queue -> unit
+  val print   : t -> unit
+  val dprint  : bool -> t -> unit
 end
 
 module type RDEQUE =
 sig
   include RQUEUE
 
-  val cons : (Elem.t * queue) -> queue
-  val last : queue -> Elem.t
-  val init : queue -> queue
+  val cons : elt * t -> t
+  val last : t -> elt
+  val init : t -> t
 end

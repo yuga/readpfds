@@ -4,15 +4,14 @@ open Rqueue;;
 open SmallStream;;
 open Printf;;
 
-module RealTimeQueue (Element : ITEM) : RQUEUE
-  with module Elem = Element =
-struct
-  module Elem = Element
+module RealTimeQueueP : sig
+  include RQUEUEP
+end = struct
   module S = SmallStream
 
-  (* definition of queue
+  (* definition of RQUEUE.t 
    * (front, rear, schedule) *)
-  type queue = Elem.t S.stream * Elem.t list * Elem.t S.stream
+  type 'a q = 'a S.stream * 'a list * 'a S.stream
 
   (* exception *)
   exception Empty
@@ -25,13 +24,13 @@ struct
     | _ -> false
   ;;
 
-  let rec rotate : queue -> Elem.t S.stream = function
+  let rec rotate : 'a q -> 'a S.stream = function
     | (lazy S.Nil, y :: _, a) -> lazy (S.Cons (y, a))
     | (lazy (S.Cons (x, xs)), y :: ys, a) ->
         lazy (S.Cons (x, rotate (xs, ys, lazy (S.Cons (y, a)))))
   ;;
 
-  let exec : queue -> queue = function
+  let exec : 'a q -> 'a q = function
     | (f, r, lazy (S.Cons (x, s))) -> (f, r, s)
     | (f, r, lazy S.Nil) -> let f' = rotate (f, r, lazy S.Nil)
                             in (f', [], f')
@@ -49,13 +48,13 @@ struct
     | (lazy (S.Cons (x, f)), r, s) -> exec (f, r, s)
   ;;
 
-  let dprint show (f, r, s) =
+  let print_queue print show (f, r, s) =
     let rec print_elem_stream s =
       let print_elem_stream_val = function
         | (lazy S.Nil) -> print_string "Nil"
         | (lazy (S.Cons (x, xs))) ->
             print_string "Cons (";
-            Elem.print x;
+            print x;
             print_string ", ";
             print_elem_stream xs;
             print_string ")" in
@@ -64,8 +63,8 @@ struct
         else print_string "SUSP" in
     let rec print_elem_list = function
       | [] -> ()
-      | (x :: xs) -> Elem.print x; print_string ";"; print_elem_list xs in
-    print_string "queue\n\t(";
+      | (x :: xs) -> print x; print_string ";"; print_elem_list xs in
+    print_string "RealTimeQueue\n\t(";
     print_elem_stream f;
     print_string ",\n\t[";
     print_elem_list r;
@@ -73,6 +72,18 @@ struct
     print_elem_stream s;
     print_string ")";
     print_newline ()
+  ;;
+end
+
+module RealTimeQueue (Item : ITEM) : RQUEUE
+  with type elt = Item.t = 
+struct
+  include RealTimeQueueP
+  
+  type elt = Item.t
+  type t = elt q
+
+  let dprint show q = print_queue Item.print show q
   ;;
 
   let print q = dprint false q

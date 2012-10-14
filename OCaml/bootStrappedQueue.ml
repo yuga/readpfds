@@ -2,28 +2,26 @@ open Item;;
 open Ordered;;
 open Rqueue;;
 
-module QueueException = struct
-  exception Empty
-end
+module rec BootStrappedQueuePRec : sig
+  type 'a queue = E
+                 | Q of int * 'a list * 'a list Lazy.t queue * int * 'a list
 
-module rec PolymorphicQueue : sig
-  type 'a pqueue = E
-                 | Q of int * 'a list * 'a list Lazy.t pqueue * int * 'a list
-  val isEmpty      : 'a pqueue -> bool
-  val snoc         : 'a pqueue * 'a -> 'a pqueue
-  val head         : 'a pqueue -> 'a
-  val tail         : 'a pqueue -> 'a pqueue
+  val isEmpty      : 'a queue -> bool
+  val snoc         : 'a queue * 'a -> 'a queue
+  val head         : 'a queue -> 'a
+  val tail         : 'a queue -> 'a queue
+ 
+  val checkF       : (int * 'a list * 'a list Lazy.t queue * int * 'a list) -> 'a queue
+  val checkQ       : (int * 'a list * 'a list Lazy.t queue * int * 'a list) -> 'a queue 
 
-  val checkF       : (int * 'a list * 'a list Lazy.t pqueue * int * 'a list) -> 'a pqueue
-  val checkQ       : (int * 'a list * 'a list Lazy.t pqueue * int * 'a list) -> 'a pqueue 
-
-  val print_pqueue : string * ('a -> unit) * 'a pqueue -> unit
+  val print_queuerec : ('a -> unit) -> bool -> string -> 'a queue -> unit
 end = struct
-  open PolymorphicQueue
-  open QueueException
+  open BootStrappedQueuePRec
 
-  type 'a pqueue = E
-                 | Q of int * 'a list * 'a list Lazy.t pqueue * int * 'a list
+  type 'a queue = E
+                 | Q of int * 'a list * 'a list Lazy.t queue * int * 'a list
+
+  exception Empty
 
   let isEmpty = function
     | E -> true
@@ -56,27 +54,31 @@ end = struct
     else checkF q
   ;;
 
-  let print_pqueue (indent, print, q) = match q with
+  let print_queuerec print_a show indent q = match q with
     | E -> print_string "E"
     | Q (lenfm, f, m, lenr, r) ->
         let rec print_list = function
           | [] -> ()
           | x :: xs' ->
-              print x;
+              print_a x;
               print_string ";";
               print_list xs' in
-        let print_list_susp = function
-          | lazy xs ->
-              print_string "[";
-              print_list xs;
-              print_string "]" in
+        let print_list_susp s =
+          let print_list_susp' = function
+            | lazy xs ->
+                print_string "[";
+                print_list xs;
+                print_string "]" in
+            if show || Lazy.lazy_is_val s
+            then print_list_susp' s
+            else print_string "SUSP" in
         print_string indent;
         print_string "Q (\n"; print_string indent;
         print_int lenfm;
         print_string ", [";
         print_list f;
         print_string "],\n"; print_string indent;
-        print_pqueue (indent ^ "  ", print_list_susp, m);
+        print_queuerec print_list_susp show (indent ^ "  ") m;
         print_string ",\n"; print_string indent;
         print_int lenr;
         print_string ", [";
@@ -85,23 +87,37 @@ end = struct
   ;;
 end
 
-module BootStrappedQueue (Element : ITEM) : RQUEUE
-  with module Elem = Element =
-struct
-  include QueueException
-  include PolymorphicQueue
-  module Elem = Element
+module BootStrappedQueueP : sig
+  include module type of BootStrappedQueuePRec
+  include RQUEUEP with type 'a q = 'a queue
+end = struct
+  include BootStrappedQueuePRec
+  type 'a q = 'a queue
+  
+  let empty = E
+  ;;
 
-  type queue = Elem.t pqueue
+  let print_queue print_a show q =
+    print_string "BootStrappedQueue (\n";
+    print_queuerec (fun x -> print_a x) show "" q;
+    print_string ")";
+    print_newline ()
+  ;;
+end
+
+module BootStrappedQueue (Item : ITEM) : sig
+  include RQUEUE with type elt = Item.t 
+end = struct
+  include BootStrappedQueueP
+
+  type elt = Item.t
+  type t = elt queue
 
   let empty = E
   ;;
 
   let dprint show q =
-    print_string "queue (\n";
-    print_pqueue ("", (fun x -> Elem.print x), q);
-    print_string ")";
-    print_newline ()
+    print_queue Item.print show q
   ;;
 
   let print q = dprint false q

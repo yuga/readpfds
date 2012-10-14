@@ -8,13 +8,13 @@ sig
   val c : int
 end
 
-module BankersDeque (Element : ITEM) (ConstNum : CONSTNUM) : RDEQUE
-  with module Elem = Element =
+module BankersDeque (Item : ITEM) (ConstNum : CONSTNUM) : RDEQUE
+  with type elt = Item.t =
 struct
-  module Elem = Element
+  type elt = Item.t
   module S = SmallStream
 
-  type queue = int * Elem.t S.stream * int * Elem.t S.stream
+  type t = int * elt S.stream * int * elt S.stream
 
   exception Empty
 
@@ -76,7 +76,7 @@ struct
         | (lazy S.Nil) -> print_string "Nil"
         | (lazy (S.Cons (x, xs))) ->
             print_string "Cons (";
-            Elem.print x;
+            Item.print x;
             print_string ", ";
             print_elem_stream xs;
             print_string ")" in

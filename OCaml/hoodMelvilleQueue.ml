@@ -2,18 +2,16 @@ open Item;;
 open Ordered;;
 open Rqueue;;
 
-module HoodMelvilleQueue (Element : ITEM) : RQUEUE
-  with module Elem = Element =
-struct
-  module Elem = Element
-
+module HoodMelvilleQueueP : sig
+  include RQUEUEP
+end = struct
   type 'a rotation_state =
       IDLE
     | REVERSING of int * 'a list * 'a list * 'a list * 'a list
     | APPENDING of int * 'a list * 'a list
     | DONE of 'a list
 
-  type queue = int * Elem.t list * Elem.t rotation_state * int * Elem.t list
+  type 'a q = int * 'a list * 'a rotation_state * int * 'a list
 
   exception Empty
 
@@ -64,11 +62,11 @@ struct
     | (lenf, x :: f, state, lenr, r) -> check (lenf - 1, f, invalidate state, lenr, r)
   ;;
 
-  let print (lenf, f, state, lenr, r) =
+  let print_queue print_a _ (lenf, f, state, lenr, r) =
     let rec print_list = function
       | [] -> ()
       | (x :: xs) ->
-          Elem.print x;
+          print_a x;
           print_string ";";
           print_list xs in
     let print_state = function
@@ -97,7 +95,7 @@ struct
           print_string "DONE\n\t\t([";
           print_list newf;
           print_string "])" in
-    print_string "queue\n\t(";
+    print_string "HoodMelvilleQueue\n\t(";
     print_int lenf;
     print_string ",\n\t[";
     print_list f;
@@ -111,7 +109,20 @@ struct
     print_newline ();
   ;;
 
-  let dprint _ q = print q
+end
+
+module HoodMelvilleQueue (Item : ITEM) : RQUEUE
+  with type elt = Item.t =
+struct
+  include HoodMelvilleQueueP
+
+  type elt = Item.t
+  type t = elt q
+
+  let dprint show q = print_queue Item.print show q
+  ;;
+
+  let print q = dprint false q
   ;;
 end
 

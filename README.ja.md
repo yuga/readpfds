@@ -25,7 +25,7 @@ Syntax Sugarの導入などはほとんど行っていないので、記述は�
 そのようななかでひとつだけ、Lazyパターンを使用しています。
 そのため実行にはOCaml 3.12以降が必要です。
 
-この本は、PFDS読書会 (Twitter Hastag #readpfds) に参加しながら読み進めました。
+この本は、PFDS読書会に参加しながら読み進めました。
 OCamlについては何も知らなかったので@khibinoさんと@master_qさんが作っていた
 PFDSリポジトリのOCaml実装を大変参考にしています。
 
@@ -36,3 +36,7 @@ PFDSリポジトリのOCaml実装を大変参考にしています。
   - OUnit
 - Haskell環境
   - GHC 7.0.1以降
+
+PFDS読書会まとめ
+http://wiki.haskell.jp/Workshop/ReadPFDS/
+

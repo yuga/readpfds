@@ -40,7 +40,7 @@ struct
   ;;
  
   let rec linkAll q =
-    let (lazy t) = Q.head q in
+    let lazy t = Q.head q in
     let q' = Q.tail q in
     if Q.isEmpty q' then t else link (t, lazy (linkAll q'))
   ;;

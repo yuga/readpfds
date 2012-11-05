@@ -2,7 +2,7 @@ open Item;;
 open Ordered;;
 open RandomAccessList;;
 
-module rec PolymorphicBinaryRandomAccessList : sig
+module (*rec*) PolymorphicBinaryRandomAccessList : sig
   type 'a plist = NIL
                 | ZERO of ('a * 'a) plist
                 | ONE of 'a * ('a * 'a) plist
@@ -19,7 +19,7 @@ module rec PolymorphicBinaryRandomAccessList : sig
 
   val print_plist : ('a -> unit) * 'a plist -> unit
 end = struct
-  open PolymorphicBinaryRandomAccessList
+  (* open PolymorphicBinaryRandomAccessList *)
 
   type 'a plist = NIL
                 | ZERO of ('a * 'a) plist
@@ -32,13 +32,13 @@ end = struct
     | _ -> false
   ;;
 
-  let cons = function
+  let rec cons : 'a.'a * 'a plist -> 'a plist = function
     | (x, NIL) -> ONE (x, NIL)
     | (x, ZERO ps) -> ONE (x, ps)
     | (x, ONE (y, ps)) -> ZERO (cons ((x, y), ps))
   ;;
 
-  let uncons = function
+  let rec uncons : 'a.'a plist -> ('a * 'a plist) = function
     | ONE (x, NIL) -> (x, NIL)
     | ONE (x, ps) -> (x, ZERO ps)
     | ZERO ps ->
@@ -52,7 +52,7 @@ end = struct
   let tail xs = let (_, xs') = uncons xs in xs'
   ;;
 
-  let lookup = function
+  let rec lookup : 'a.int * 'a plist -> 'a = function
     | (i, NIL) -> raise Subscript
     | (0, ONE (x, ps)) -> x
     | (i, ONE (x, ps)) -> lookup (i-1, ZERO ps)
@@ -61,7 +61,7 @@ end = struct
         if i mod 2 = 0 then x else y
   ;;
 
-  let fupdate = function
+  let rec fupdate : 'a.('a -> 'a) * int * 'a plist -> 'a plist = function
     | (f, i, NIL) -> raise Subscript
     | (f, 0, ONE (x, ps)) -> ONE (f x, ps)
     | (f, i, ONE (x, ps)) -> cons (x, fupdate (f, i-1, ZERO ps))
@@ -73,7 +73,7 @@ end = struct
   let update (i, y, xs) = fupdate ((fun x -> y), i, xs)
   ;;
 
-  let print_plist = function
+  let rec print_plist : 'a.('a -> unit) * 'a plist -> unit = function
     | (f, NIL) ->
         print_string "NIL\n"
     | (f, ZERO ps) ->

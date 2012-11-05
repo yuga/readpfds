@@ -61,6 +61,17 @@ print_string "CatenableList with BootStrappedQueue:\n"; PB.print_n 4;;
 print_string "CatenableList with HoodMelvilleQueue:\n"; PH.print_n 4;;
 print_string "CatenableList with RealTimeQueue:\n";     PR.print_n 4;;
 
+let list_21 = PB.make_list_snoc 21;;
+print_string "CatenableList with RealTimeQueue:\nn = 21:\n"; B.dprint false list_21;;
+print_string "CatenableList with RealTimeQueue:\nn = 21 - 1:\n"; B.dprint false (B.tail list_21);;
+
+let list_3 = PR.make_list_snoc 3;;
+let list_4 = PR.make_list_snoc 4;;
+let list_5 = PR.make_list_snoc 5;;
+let list_list = [list_3; list_4; list_5;];;
+print_string "Catnate a list of CatenableList with RealTimeQueue:\n";
+print_string "[n = 3; n = 4; n = 5;]"; R.dprint true (R.concat list_list);;
+
 (*
 let test _ =
   let rec toCList = function

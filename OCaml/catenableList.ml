@@ -19,9 +19,10 @@ module type CATENABLELIST = sig
   val print   : t -> unit
 end
 
-module CatenableList (Q : RQUEUEP) (Item : ITEM) : CATENABLELIST
-  with type elt = Item.t =
-struct
+module CatenableList (Q : RQUEUEP) (Item : ITEM) : sig
+  include CATENABLELIST with type elt = Item.t
+  val concat : t list -> t
+end = struct
   type elt = Item.t
   type t = E
          | C of elt * t Lazy.t Q.q
@@ -65,6 +66,13 @@ struct
   let tail = function
     | E -> raise Empty
     | C (x, q) -> if Q.isEmpty q then E else linkAll q
+  ;;
+
+  (* Exercise 10.6 *)
+  let rec concat = function
+    | [] -> E
+    | E :: cs -> concat cs
+    | c :: cs -> link (c, lazy (concat cs))
   ;;
 
   let dprint show cs =

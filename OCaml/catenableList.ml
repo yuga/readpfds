@@ -72,7 +72,14 @@ end = struct
   let rec concat = function
     | [] -> E
     | E :: cs -> concat cs
-    | c :: cs -> link (c, lazy (concat cs))
+    | c :: cs ->
+      let rec next = function
+        | [] -> []
+        | E :: cs' -> next cs'
+        | cs' -> cs'
+      in match next cs with
+        | [] -> c
+        | cs' -> link (c, lazy (concat cs'))
   ;;
 
   let dprint show cs =

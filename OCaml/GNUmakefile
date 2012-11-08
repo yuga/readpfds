@@ -21,4 +21,5 @@ all:: item.cmo ordered.cmo \
       lazyBinaryRandomAccessList.cmo \
       altBinaryRandomAccessList.cmo \
       bootStrappedQueue.cmo \
-      catenableList.cmo
+      catenableList.cmo \
+      bootStrappedHeap.cmo

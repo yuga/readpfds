@@ -16,6 +16,16 @@ let make_heap n =
   in make_heap n 1 H.empty
 ;;
 
+let rec print_heap h =
+  if H.isEmpty h then
+    (print_string "none";
+    print_newline ())
+  else
+    (print_int (H.findMin h);
+    print_newline ();
+    print_heap (H.deleteMin h))
+;;
+
 print_string "n=0\n"; H.print H.empty;;
 print_string "n=1\n"; H.print (make_heap 1);;
 print_string "n=2\n"; H.print (make_heap 2);;
@@ -26,4 +36,7 @@ print_string "n=6\n"; H.print (make_heap 6);;
 print_string "n=7\n"; H.print (make_heap 7);;
 print_string "n=8\n"; H.print (make_heap 8);;
 print_string "n=9\n"; H.print (make_heap 9);;
+(*
 print_string "n=1023\n"; H.print (make_heap 1023);;
+*)
+print_heap (make_heap 32);;

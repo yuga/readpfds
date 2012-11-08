@@ -76,7 +76,7 @@ struct
     | (lazy (S.Cons (One (Node (x, _) as t), ds))) ->
         match removeMinTree ds with
           | ((Node (x', _) as t'), ds') ->
-              if Elem.eq (x, x') then (t, lazy (S.Cons (Zero, ds)))
+              if Elem.leq (x, x') then (t, lazy (S.Cons (Zero, ds)))
               else (t', lazy (S.Cons (One t, ds')))
   ;;
 

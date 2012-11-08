@@ -11,8 +11,8 @@ module H = IntHeap
 let make_heap n =
   let rec make_heap n i h =
     if i < n
-    then make_heap n (i+1) (H.insert (i, q))
-    else H.insert (i, q)
+    then make_heap n (i+1) (H.insert (i, h))
+    else H.insert (i, h)
   in make_heap n 1 H.empty
 ;;
 

@@ -24,7 +24,7 @@ struct
   ;;
 
   let link ((Node (x1, c1) as t1), (Node (x2, c2) as t2)) =
-    if Elem.eq (x1, x2)
+    if Elem.leq (x1, x2)
     then Node (x1, t2 :: c1)
     else Node (x2, t1 :: c2)
   ;;

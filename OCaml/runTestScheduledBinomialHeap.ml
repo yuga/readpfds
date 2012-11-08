@@ -39,4 +39,11 @@ print_string "n=9\n"; H.print (make_heap 9);;
 (*
 print_string "n=1023\n"; H.print (make_heap 1023);;
 *)
+
+print_string "TEST\n";;
+H.print (make_heap 7);;
+H.print (H.deleteMin (make_heap 7));;
+H.print (H.deleteMin (H.deleteMin (make_heap 7)));;
+
+print_string "n=32:\n";;
 print_heap (make_heap 32);;

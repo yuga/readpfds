@@ -6,16 +6,15 @@ module BootStrappedHeap
 -> functor (Element : ORDERED)
 -> struct
   module Elem = Element
+  exception Empty
 
   module rec BootStrappedElem : sig
     type t = E
            | H of Elem.t * PrimH.heap
-    exception Empty
     include ORDERED with type t := t
   end = struct
     type t = E
            | H of Elem.t * PrimH.heap
-    exception Empty
     
     let eq = function
       | E, E -> true
@@ -29,16 +28,19 @@ module BootStrappedHeap
     ;;
 
     let leq = function
+      | E, E -> true
       | (H (x, _), (H (y, _))) -> Elem.leq (x, y)
       | _ -> raise Empty
     ;;
 
-    let print = function
+    let print : t -> unit = function
       | E -> print_string "E"
       | H (x, h) ->
           print_string "H (";
           Elem.print x;
-          print_string ", h)"
+          print_string ", ";
+          PrimH.print h;
+          print_string ")"
     ;;
   end
   and PrimH : HEAP with module Elem := BootStrappedElem = MakeH (BootStrappedElem);;

@@ -68,9 +68,20 @@ print_string "CatenableList with RealTimeQueue:\nn = 21 - 1:\n"; B.dprint false 
 let list_3 = PR.make_list_snoc 3;;
 let list_4 = PR.make_list_snoc 4;;
 let list_5 = PR.make_list_snoc 5;;
-let list_list = [list_3; list_4; list_5;];;
+let list_list = [list_3; R.empty; list_4; R.empty; R.empty; list_5;];;
 print_string "Catnate a list of CatenableList with RealTimeQueue:\n";
-print_string "[n = 3; n = 4; n = 5;]"; R.dprint true (R.concat list_list);;
+print_string "[n = 3; E; n = 4; E; E; n = 5;]"; R.dprint true (R.concat list_list);;
+
+let rec print_loop c = match R.isEmpty c with
+  | true -> 
+        print_string "end"
+  | false ->
+        print_int (R.head c);
+        print_string "\n";
+        print_loop (R.tail c)
+;;
+
+print_loop (R.concat list_list);;
 
 (*
 let test _ =

@@ -95,9 +95,9 @@ struct
     let rec print_stream s =
       let print_stream_val = function
         | (lazy S.Nil) -> 
-            print_string "Nil"
+            print_string "<Nil>"
         | (lazy (S.Cons (x, xs))) -> (
-            print_string "Cons <";
+            print_string "<Cons ";
             print_digit  x;
             print_string ", ";
             print_stream xs;

@@ -23,4 +23,6 @@ all:: item.cmo ordered.cmo \
       bootStrappedQueue.cmo \
       catenableList.cmo \
       bootStrappedHeap.cmo \
-      implicitQueue.cmo
+      implicitQueue.cmo \
+      simpleCatenableDeque.cmo \
+      implicitCatenableDeque.cmo

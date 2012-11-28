@@ -20,18 +20,15 @@ module BootStrappedHeap
       | E, E -> true
       | (H (x, _), (H (y, _))) -> Elem.eq (x, y)
       | _, _ -> false
-    ;;
 
     let lt = function
       | (H (x, _), (H (y, _))) -> Elem.lt (x, y)
       | _ -> raise Empty
-    ;;
 
     let leq = function
       | E, E -> true
       | (H (x, _), (H (y, _))) -> Elem.leq (x, y)
       | _ -> raise Empty
-    ;;
 
     let print : t -> unit = function
       | E -> print_string "E"
@@ -41,7 +38,6 @@ module BootStrappedHeap
           print_string ", ";
           PrimH.print h;
           print_string ")"
-    ;;
   end
   and PrimH : HEAP with module Elem := BootStrappedElem = MakeH (BootStrappedElem);;
 
@@ -50,12 +46,10 @@ module BootStrappedHeap
   type heap = t
 
   let empty = E
-  ;;
 
   let isEmpty = function
     | E -> true
     | _ -> false
-  ;;
 
   let merge = function
     | (E, h) -> h
@@ -65,15 +59,12 @@ module BootStrappedHeap
           H (x, PrimH.insert (h2, p1))
         else
           H (y, PrimH.insert (h1, p2))
-  ;;
 
   let insert (x, h) = merge (H (x, PrimH.empty), h)
-  ;;
 
   let findMin = function 
     | E -> raise Empty
     | H (x, _) -> x
-  ;;
 
   let deleteMin = function
     | E -> raise Empty
@@ -84,7 +75,6 @@ module BootStrappedHeap
           let H (y, p1) = PrimH.findMin p in
           let p2 = PrimH.deleteMin p in
           H (y, PrimH.merge (p1, p2))
-  ;;
 
   let print = function
     | E ->
@@ -97,7 +87,6 @@ module BootStrappedHeap
         PrimH.print p;
         print_string ")";
         print_newline()
-  ;;
 end
 
 open ScheduledBinomialHeap;;

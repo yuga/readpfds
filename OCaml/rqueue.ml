@@ -22,6 +22,20 @@ sig
   val init : 'a q -> 'a q
 end
 
+module type RDEQUEPS =
+sig
+  include RDEQUEP
+
+  val size : 'a q -> int
+end
+
+module type CATENABLEDEQUEP =
+sig
+  include RDEQUEP
+
+  val (++) : 'a q -> 'a q -> 'a q
+end
+
 module type RQUEUE =
 sig
   type elt
@@ -45,4 +59,11 @@ sig
   val cons : elt * t -> t
   val last : t -> elt
   val init : t -> t
+end
+
+module type CATENABLEDEQUE =
+sig
+  include RDEQUE
+
+  val (++) : t -> t -> t
 end

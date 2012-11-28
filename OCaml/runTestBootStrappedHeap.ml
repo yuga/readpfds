@@ -46,5 +46,12 @@ H.print (make_heap 8);;
 H.print (H.deleteMin (make_heap 8));;
 H.print (H.deleteMin (H.deleteMin (make_heap 8)));;
 
+print_string "TEST2\n";;
+let test_1 = H.insert (9, (H.insert (7, (H.insert (6, (H.insert (2, H.empty)))))));;
+let test_2 = H.insert (5, (H.insert (4, (H.insert (3, H.empty)))));;
+H.print test_1;;
+H.print test_2;;
+H.print (H.merge (test_1, test_2));;
+
 print_string "n=32:\n";;
 print_heap (make_heap 32);;

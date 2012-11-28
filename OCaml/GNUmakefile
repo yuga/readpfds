@@ -22,4 +22,5 @@ all:: item.cmo ordered.cmo \
       altBinaryRandomAccessList.cmo \
       bootStrappedQueue.cmo \
       catenableList.cmo \
-      bootStrappedHeap.cmo
+      bootStrappedHeap.cmo \
+      implicitQueue.cmo

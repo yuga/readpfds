@@ -2,9 +2,15 @@ open Heap;;
 open Ordered;;
 
 module BootStrappedHeap
- = functor (MakeH : functor (Element : ORDERED) -> HEAP with module Elem = Element)
+(*
+= functor (MakeH : functor (Element : ORDERED) -> HEAP with module Elem = Element)
 -> functor (Element : ORDERED)
 -> struct
+*)
+(MakeH : functor (Element : ORDERED) -> HEAP with module Elem = Element)
+(Element : ORDERED)
+: (HEAP with module Elem = Element)
+= struct
   module Elem = Element
   exception Empty
 
